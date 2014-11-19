@@ -2,7 +2,6 @@
 " General
 "
 set nocompatible             " not compatible with the old-fashion vi mode
-set history=100              " store 100 lines of history
 
 "
 " User Interface
@@ -11,7 +10,8 @@ set showmode                 " display the current mode
 set ruler                    " always show current position
 set scrolloff=7              " set scroll offset to 7 lines above/below cursor
 set autoread                 " auto read when file is changed from outside
-set nu                       " display line numbers
+set number                   " show line numbers
+set numberwidth=6            " make the number gutter 6 characters wide
 set clipboard=unnamed        " yank to the system register (*) by default
 set hid                      " hide abandon buffers in order to not lose undo history
 set showmatch                " cursor shows matching ) and }
@@ -57,35 +57,45 @@ augroup END
 "
 " Formatting
 "
-set autoindent               " auto indentation
-set copyindent               " copy the previous indentation on autoindenting
-set smarttab                 " insert tabs on line start according to context
-set expandtab                " replace <TAB> with spaces
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set autoindent            " auto-indent
+set tabstop=2             " tab spacing
+set softtabstop=2         " unify
+set shiftwidth=2          " indent/outdent by 2 columns
+set shiftround            " always indent/outdent to the nearest tabstop
+set expandtab             " use spaces instead of tabs
+set smartindent           " automatically insert one extra level of indentation
+set smarttab              " use tabs at the start of a line, spaces elsewhere
+set nowrap                " don't wrap text
 autocmd FileType Makefile set noexpandtab
-autocmd FileType jade set tabstop=2|set softtabstop=2|set shiftwidth=2
+autocmd FileType ruby setlocal sw=2 ts=2 sts=2
 
 "
-" Colors and Fonts
+" Colours
 "
-syntax on                    " enable syntax highlighting
-set hlsearch                 " highlight search results
-" highlight current line in the current window
-augroup CursorLine
+set t_Co=256              " enable 256-color mode.
+syntax enable             " enable syntax highlighting (previously syntax on).
+colorscheme molokai       " set colorscheme
+
+" Prettify JSON files
+autocmd BufRead,BufNewFile *.json set filetype=json
+autocmd Syntax json sou ~/.vim/syntax/json.vim
+
+" Prettify Vagrantfile
+autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+
+" Prettify Markdown files
+augroup markdown
   au!
-  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  au WinLeave * setlocal nocursorline
+  au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
 augroup END
 
-set background=dark          " set background dark
-set t_Co=256                 " 256 color mode
-
-if has("gui_running")
-  colorscheme moria
+" Highlight characters that go over 80 columns (by drawing a border on the 81st)
+if exists('+colorcolumn')
+  set colorcolumn=81
+  highlight ColorColumn ctermbg=red
 else
-  colorscheme wombat256mod
+  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+  match OverLength /\%81v.\+/
 endif
 
 "
@@ -111,7 +121,7 @@ set laststatus=2
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
-set fileencodings=ucs-bom,utf-8,big5,gb2312,latin1
+set fileencodings=ucs-bom,utf-8,gb2312,latin1
 
 fun! ViewUTF8()
   set encoding=utf-8
@@ -125,7 +135,3 @@ fun! UTF8()
   set fileencodings=ucs-bom,big5,utf-8,latin1
 endfun
 
-fun! Big5()
-  set encoding=big5
-  set fileencoding=big5
-endfun
