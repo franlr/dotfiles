@@ -1,0 +1,18 @@
+[user]
+	name = name
+	email = email
+[color]
+	ui = true
+[core]
+        editor = vim
+        excludesfile = ~/.gitignore
+	[alias]
+        co = checkout
+        br = branch
+        ci = commit
+	st = status
+	last = log -1 HEAD
+	unstage = reset HEAD --
+	as = remote update
+	zx = pull origin master
+	qw = submodule update
